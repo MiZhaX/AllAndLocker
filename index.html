@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="./styles/principal.css">
+    <script src="./JS/principal.js"></script>
+    <link rel="stylesheet" href="./styles/productos.css">
+    <title>All&Locker</title>
+    <!-- Script para conectar con FontAwesome -->
+    <script src="https://kit.fontawesome.com/c63f30e957.js" crossorigin="anonymous"></script>
+    <!-- Script para conectar con emailjs -->
+    <script type="text/javascript"
+        src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js">
+    </script>
+    <script type="text/javascript">
+    (function(){
+        emailjs.init({
+            publicKey: "MQBvZmRzAqRPZhWgD",
+        });
+    })();
+    </script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,100;0,300;0,400;0,500;0,700;0,900;1,100;1,300;1,400;1,500;1,700;1,900&display=swap');
+        @import url('https://fonts.cdnfonts.com/css/futura-pt');
+    </style>
+</head>
+
+<body>
+    <!-- Sección inicio -->
+    <section id="container-inicio">
+        <div id="navbar">
+            <div id="enlaces">
+                <a href="#container-inicio" id="boton-inicio"><img src="./img/logo.png" alt="logo" id="logo"></a>
+                <ul class="links">
+                    <li><a href="#container-categorias" id="boton-categorias">CATEGORÍAS</a></li>
+                    <li><a href="#container-siguenos" id="boton-redes">CONECTATE</a></li>
+                    <li><a href="#container-suscripcion" id="boton-suscripcion">OFERTAS</a></li>
+                </ul>
+            </div>
+            <ul class="sesion">
+                <li id="boton-login"><a href="#container-inicio"><i class="fa-solid fa-user fa-2xl"></i></a></li>
+                <li id="boton-registro"><a href="#container-inicio"><i class="fa-solid fa-clipboard fa-2xl"></i></a></li>
+                <li id="boton-logout"><a href="#container-inicio"><i class="fa-solid fa-right-from-bracket fa-2xl"></i></a></li>
+                <li><a href="#container-inicio" id="boton-carrito"><i class="fa-solid fa-cart-shopping fa-2xl"></i> (0)</a></li> 
+            </ul>
+        </div>
+        <div id="container-hero">
+            <h2 id="titulo-principal">ALL<span style="color: var(--alt-color);">&</span>LOCKER</h2>
+            <h3 id="eslogan"><i>All&Locker: estilo para ti y tu hogar.</i></h3>
+            <a href="" id="flecha-inicio"><i class="fa-solid fa-arrow-down-long fa-2xl"></i></a>
+        </div>
+    </section>
+
+    <!-- Sección de categorías -->
+    <section id="container-categorias">
+        <h2>Categorías</h2>
+        <div id="categorias"></div>
+    </section>
+
+    <!-- Sección de productos -->
+    <section id="container-productos">
+        <h2>Productos</h2>
+        <div id="lista-productos"></div>
+        <p id="mensaje-productos" style="display: none;">No hay productos disponibles</p>
+        <div id="carga-contenedor">
+            <img src="./img/cargando.gif" alt="cargando..." id="carga">
+        </div>
+    </section>
+
+    <!-- Sección redes sociales -->
+    <section id="container-siguenos">
+        <h2>Mantente conectado</h2>
+        <div id="siguenos-contenido">
+            <div id="imagen-publicitaria">
+                <img src="./img/redes.jpg" alt="Síguenos en redes sociales">
+            </div>
+            <div id="texto-publicitario">
+                <p>Síguenos en nuestras redes sociales y mantente al tanto de todas nuestras ofertas y novedades.</p>
+                <div id="iconos-redes">
+                    <a href="https://www.facebook.com/" target="_blank" class="icono"><i class="fa-brands fa-facebook fa-xl"></i></a>
+                    <a href="https://www.instagram.com/" target="_blank" class="icono"><i class="fa-brands fa-instagram fa-xl"></i></a>
+                    <a href="https://twitter.com/" target="_blank" class="icono"><i class="fa-brands fa-twitter fa-xl"></i></a>
+                    <a href="https://tiktok.com/" target="_blank" class="icono"><i class="fa-brands fa-tiktok fa-xl"></i></a>
+                </div>
+            </div>
+        </div>
+    </section>    
+
+    <!-- Sección Newsletter -->
+    <section id="container-suscripcion">
+        <h2>¡Recibe nuestras ofertas y novedades!</h2>
+        <p>Suscríbete con tu correo electrónico y sé el primero en enterarte de nuestras promociones.</p>
+        <form id="form-suscripcion">
+            <input type="email" id="email-suscripcion" name="email" placeholder="Introduce tu correo electrónico" required/>
+            <button type="submit">Suscribirse</button>
+        </form>
+    </section>
+    
+    <!-- Sección del carrito -->
+    <section id="container-carrito" style="display: none;">
+        <h2 class="titulo-formulario">Carrito de Compras</h2>
+        <div id="carrito-lista"></div>
+        <div id="compra">
+            <p id="total-carrito">Total: $0.00</p>
+            <button id="vaciar-carrito">Vaciar carrito</button>
+            <button id="finalizar-compra">Finalizar compra</button>
+        </div>
+    </section>
+
+    <!-- Sección del registro usuario -->
+    <section id="container-registro" style="display: none;">
+        <h2 class="titulo-formulario">Registrarse</h2>
+        <form id="form-registro">
+            <input type="text" id="nombre-registro" placeholder="Nombre" required>
+            <input type="email" id="email-registro" placeholder="Correo electrónico" required>
+            <input type="password" id="password-registro" placeholder="Contraseña" required>
+            <button type="submit">Registrarse</button>
+        </form>
+    </section>
+    
+    <!-- Sección del login usuario -->
+    <section id="container-login" style="display: none;">
+        <h2 class="titulo-formulario">Iniciar sesión</h2>
+        <form id="form-login">
+            <input type="email" id="email-login" placeholder="Correo electrónico" required>
+            <input type="password" id="password-login" placeholder="Contraseña" required>
+            <button type="submit">Iniciar sesión</button>
+        </form>
+    </section>
+
+    <!-- Footer -->
+    <footer id="footer">
+        <div class="footer-container">
+            <!-- Ayuda -->
+            <div class="footer-section" id="footer-ayuda">
+                <h3>Ayuda</h3>
+                <ul>
+                    <li><a href="">Envíos</a></li>
+                    <li><a href="">Devoluciones</a></li>
+                    <li><a href="">Contáctanos</a></li>
+                    <li><a href="">Sostenibilidad</a></li>
+                    <li><a href="">Preguntas Frecuentes</a></li>
+                </ul>
+            </div>
+    
+            <!-- Nosotros -->
+            <div class="footer-section" id="footer-nosotros">
+                <h3>Nosotros</h3>
+                <ul>
+                    <li><a href="">¿Quiénes somos?</a></li>
+                    <li><a href="">Trabaja con nosotros</a></li>
+                    <li><a href="">Blog</a></li>
+                    <li><a href="">Nuestra historia</a></li>
+                </ul>
+            </div>
+    
+            <!-- Legal -->
+            <div class="footer-section" id="footer-legal">
+                <h3>Legal</h3>
+                <ul>
+                    <li><a href="">Términos y condiciones</a></li>
+                    <li><a href="">Política de privacidad</a></li>
+                    <li><a href="">Política de cookies</a></li>
+                    <li><a href="">Políticas de envío</a></li>
+                    <li><a href="">Aviso legal</a></li>
+                </ul>
+            </div>
+    
+            <!-- Métodos de Pago -->
+            <div class="footer-section" id="footer-pago">
+                <h3>Métodos de Pago</h3>
+                <ul class="metodos-pago">
+                    <li><i class="fa-brands fa-cc-visa"></i> Visa</li>
+                    <li><i class="fa-brands fa-cc-mastercard"></i> Mastercard</li>
+                    <li><i class="fa-brands fa-cc-paypal"></i> PayPal</li>
+                    <li><i class="fa-brands fa-cc-amex"></i> American Express</li>
+                </ul>
+            </div>
+        </div>
+    
+        <!-- Redes Sociales -->
+        <div class="footer-social">
+            <h3>Síguenos</h3>
+            <div class="social-icons">
+                <a href="https://facebook.com" target="_blank"><i class="fa-brands fa-facebook"></i></a>
+                <a href="https://instagram.com" target="_blank"><i class="fa-brands fa-instagram"></i></a>
+                <a href="https://twitter.com" target="_blank"><i class="fa-brands fa-twitter"></i></a>
+                <a href="https://linkedin.com" target="_blank"><i class="fa-brands fa-linkedin"></i></a>
+            </div>
+        </div>
+    </footer>    
+</body>
+</html>
