@@ -27,7 +27,6 @@ body {
     grid-gap: 0.5rem;
     font-family: var(--sec-font);
     background-color: var(--bg-color);
-    min-height: 100vh;
 }
    
 h2{
@@ -244,6 +243,10 @@ h2{
     padding: 0 10rem;
     gap: 15px;
     text-align: center;
+}
+
+#mensaje.productos{
+    display: none;
 }
 
 .producto {
@@ -731,7 +734,11 @@ h2{
     .links, .sesion {
         flex-direction: column; 
         gap: 2rem; 
-        padding-inline-start: 20px;
+        padding-inline-start: 10px;
+    }
+
+    .sesion a{
+        padding: 0.65rem;
     }
 
     #container-hero {
@@ -750,6 +757,7 @@ h2{
     #categorias {
         grid-template-columns: repeat(2, 1fr); 
         gap: 0.5rem;
+        margin: 0 1rem;
     }
 
     .categoria img{

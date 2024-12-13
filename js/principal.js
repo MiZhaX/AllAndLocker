@@ -37,9 +37,9 @@ window.onload = () => {
     const formRegistro = document.getElementById("form-registro")
 
     // VARIABLES PARA LA FUNCIONALIDAD DEL PROGRAMA
-    let productoInicial = 0; // Para paginar productos
+    let productoInicial = 0; // Paginar productos
     let categoriaId = null; // Categoría seleccionada
-    let cargando = false; // Control de estado de carga
+    let cargando = false; // Estado de carga
     let hayMasProductos = true; // Indica si hay más productos por cargar
     let carrito = [];
     let sesion = JSON.parse(localStorage.getItem("sesion"));
@@ -65,7 +65,7 @@ window.onload = () => {
     function mostrarCategorias() {
         const url = `https://api.escuelajs.co/api/v1/categories`;
 
-        categorias.innerHTML = ""; // Evitar duplicados
+        categorias.innerHTML = ""; 
 
         fetch(url, { method: "GET" })
             .then((res) => res.json())
@@ -74,21 +74,19 @@ window.onload = () => {
                     const categoria = document.createElement("div");
                     categoria.className = "categoria";
 
-                    // Crear el enlace <a> que envuelve la foto
                     const enlace = document.createElement("a");
                     enlace.setAttribute("href", "#container-productos");
 
-                    // Crear la imagen dentro del enlace
                     const foto = document.createElement("img");
                     foto.setAttribute("src", item.image);
                     foto.onerror = () => {
                         foto.setAttribute("src", "./img/articulo_por_defecto.jpg");
                     };
 
-                    // Asignar el evento al enlace
+                    // Asignar el evento a la imagen
                     enlace.addEventListener("click", (e) => {
                         e.preventDefault(); 
-                        categoriaId = item.id; // Obtener la id de la categoría
+                        categoriaId = item.id; 
                         productoInicial = 0; 
                         productosDiv.innerHTML = "";
                         hayMasProductos = true; 
@@ -99,23 +97,17 @@ window.onload = () => {
                         cargarProductos(); 
                     });
 
-                    // Añadir la imagen al enlace
                     enlace.appendChild(foto);
-
-                    // Crear el nombre de la categoría
                     const nombre = document.createElement("p");
                     nombre.innerHTML = item.name.toUpperCase();
 
-                    // Añadir el enlace y el nombre al contenedor de la categoría
+                    // Añadir al documento
                     categoria.appendChild(enlace);
                     categoria.appendChild(nombre);
-
-                    // Añadir la categoría al contenedor principal
                     categorias.appendChild(categoria);
                 });
             })
             .catch((error) => {
-                console.error("Error al obtener las categorías:", error);
                 categorias.innerHTML = "<p>Error al cargar las categorías. Intenta nuevamente más tarde.</p>";
             });
     }
@@ -138,21 +130,23 @@ window.onload = () => {
             .then((res) => res.json())
             .then((productos) => {
                 if (productos.length === 0 && productoInicial === 0) {
-                    // Mostrar mensaje si no hay productos al inicio
                     mensajeProductos.style.display = "block";
-                    hayMasProductos = false; // Detener más cargas
+                    hayMasProductos = false; 
                 } else if (productos.length === 0) {
-                    // Si no hay más productos en scroll infinito, detener cargas
                     mensajeProductos.style.display = "none";
                     hayMasProductos = false;
                 } else {
                     mensajeProductos.style.display = "none";
+
+                    // Mostrar los productos
                     productos.forEach((producto) => {
                         const productoDiv = document.createElement("div");
                         productoDiv.className = "producto";
 
                         const img = document.createElement("img");
                         img.setAttribute("src", producto.images[0] || "./img/articulo_por_defecto.jpg");
+
+                        // Agregar imágen por defecto en caso de error
                         img.onerror = () => {
                             img.setAttribute("src", "./img/articulo_por_defecto.jpg");
                         };
@@ -160,7 +154,6 @@ window.onload = () => {
                         img.addEventListener("click", () => {
                             mostrarProducto(producto);
                         });
-
 
                         const nombre = document.createElement("p");
                         nombre.innerHTML = producto.title;
@@ -172,6 +165,7 @@ window.onload = () => {
                         productoDiv.appendChild(nombre);
                         productoDiv.appendChild(precio);
 
+                        // Si no se ha iniciado sesión, no se puede añadir a la cesta
                         if(sesion !== null){
                             const agregarCesta = document.createElement("button");
                             agregarCesta.innerHTML = "Añadir al carrito";
@@ -183,7 +177,7 @@ window.onload = () => {
                         productosDiv.appendChild(productoDiv);
                     });
 
-                    productoInicial++; // Incrementar página solo si hubo productos
+                    productoInicial++; 
                 }
             })
             .catch((error) => {
@@ -204,6 +198,7 @@ window.onload = () => {
             return;
         }
     
+        // Actualizar los carritos tanto de la sesion como de los usuarios registrados
         const productoEnCarrito = sesion.carrito.find(item => item.id === producto.id);
         if (productoEnCarrito) {
             productoEnCarrito.cantidad++;
@@ -212,14 +207,14 @@ window.onload = () => {
         }
         localStorage.setItem("sesion", JSON.stringify(sesion));
 
-        // Encontrar al usuario actual y actualizar su carrito
         let usuarioIndex = usuarios.findIndex(usuario => usuario.email === sesion.correo);
         if (usuarioIndex !== -1) {
             usuarios[usuarioIndex].carrito = sesion.carrito;
         }
-        // Guardar el array de usuarios actualizado en localStorage
+
         localStorage.setItem("usuarios", JSON.stringify(usuarios));
     
+        // Actualizar la vista del carrito 
         carrito = sesion.carrito;
         avisoEnPantalla("Producto añadido al carrito");
         actualizarCarrito();
@@ -230,6 +225,7 @@ window.onload = () => {
         carritoLista.innerHTML = "";
         let total = 0;
 
+        // Mostrar los productos del carrito
         carrito.forEach((producto) => {
             const productoDiv = document.createElement("div");
             productoDiv.className = "producto-carrito";
@@ -241,12 +237,13 @@ window.onload = () => {
             cantidad.type = "number";
             cantidad.value = producto.cantidad;
             cantidad.min = 1;
+
+            // Agregar funcionalidad al boton para aumentar y disminuar la cantidad
             cantidad.addEventListener("input", () => {
                 producto.cantidad = parseInt(cantidad.value) || 1;
                 sesion.carrito = carrito;
                 localStorage.setItem("sesion", JSON.stringify(sesion));
 
-                // Encontrar al usuario actual y actualizar su carrito
                 let usuarioIndex = usuarios.findIndex(usuario => usuario.email === sesion.correo);
                 if (usuarioIndex !== -1) {
                     usuarios[usuarioIndex].carrito = carrito;
@@ -259,6 +256,7 @@ window.onload = () => {
             const precio = document.createElement("p");
             precio.innerHTML = `$${(producto.price * producto.cantidad).toFixed(2)}`;
 
+            // Agregar funcionalidad al boton para eliminar el producto
             const eliminar = document.createElement("button");
             eliminar.innerHTML = `<i class="fa-solid fa-dumpster fa-lg"></i>`;
             eliminar.addEventListener("click", () => {
@@ -266,7 +264,6 @@ window.onload = () => {
                 sesion.carrito = sesion.carrito.filter(item => item.id !== producto.id);
                 localStorage.setItem("sesion", JSON.stringify(sesion));
 
-                // Encontrar al usuario actual y actualizar su carrito
                 let usuarioIndex = usuarios.findIndex(usuario => usuario.email === sesion.correo);
                 if (usuarioIndex !== -1) {
                     usuarios[usuarioIndex].carrito = sesion.carrito;
@@ -276,6 +273,7 @@ window.onload = () => {
                 actualizarCarrito();
             });
 
+            // Cargar los elementos en el documento
             productoDiv.appendChild(nombre);
             productoDiv.appendChild(cantidad);
             productoDiv.appendChild(precio);
@@ -295,7 +293,7 @@ window.onload = () => {
         const carga = document.getElementById("carga-contenedor");
         carga.style.visibility = "visible";
 
-        // Crear los elementos
+        // Crear los elementos de los detalles
         const contenedor = document.createElement("div");
         contenedor.className = "contenedor";
 
@@ -305,11 +303,14 @@ window.onload = () => {
         const botonCerrar = document.createElement("button");
         botonCerrar.className = "cerrar";
         botonCerrar.innerHTML = "x";
+
+        // Botón para cerrar la ventana
         botonCerrar.addEventListener("click", () => {
             document.body.removeChild(contenedor);
             document.body.style.overflow = "auto";
         });
 
+        // Contenido de los detalles
         detalles.innerHTML = `
             <h2>${e.title} (Id Ref: ${e.id})</h2>
             <p><strong>Descripción:</strong> ${e.description}</p>
@@ -319,6 +320,7 @@ window.onload = () => {
         detalles.appendChild(botonCerrar);
         contenedor.appendChild(detalles);
 
+        // Si no hay sesión iniciada, no se podrá agregar a carrito
         if(sesion != null){
             const botonAgregar = document.createElement("button");
             botonAgregar.className = "botonAgregar";
@@ -368,16 +370,15 @@ window.onload = () => {
                     carrito: [],
                 });
     
-                // Guardar el array actualizado en el localStorage
+                // Guardar el array actualizado
                 localStorage.setItem("usuarios", JSON.stringify(usuarios));
     
                 avisoEnPantalla("Usuario registrado con éxito");
-                mandarCorreoRegistro(); // Enviar correo de confirmación
-                landingPage(); // Redirigir al landing page
+                mandarCorreoRegistro(); 
+                landingPage();
             }
         } catch (error) {
             avisoEnPantalla("Error de conexión al registrar usuario. Intenta nuevamente.");
-            console.error(error);
         }
     }
 
@@ -386,7 +387,7 @@ window.onload = () => {
         const url = "https://api.escuelajs.co/api/v1/users/";
     
         try {
-            // Obtener el array de usuarios locales desde el localStorage
+            // Obtener el array de usuarios locales
             let usuarios = JSON.parse(localStorage.getItem("usuarios")) || [];
     
             // Buscar el usuario localmente
@@ -415,7 +416,7 @@ window.onload = () => {
                     id: usuarioEncontrado.id,
                     nombre: usuarioEncontrado.name,
                     email: usuarioEncontrado.email,
-                    password: contrasena, // Usar la contraseña proporcionada para sincronización inicial
+                    password: contrasena,
                     avatar: usuarioEncontrado.avatar,
                     carrito: [],
                 });
@@ -432,30 +433,28 @@ window.onload = () => {
                 sesion = { nombre: usuarioEncontrado.nombre, correo: email, carrito: usuarioEncontrado.carrito || [] };
                 localStorage.setItem("sesion", JSON.stringify(sesion));
     
-                // Actualizar botones de sesión
                 botonLogin.style.display = "none";
                 botonRegistro.style.display = "none";
                 botonLogout.style.display = "block";
 
-                // Actualizar el carrito
+                // Actualizar el carrito con los datos obtenidos
                 let usuarioIndex = usuarios.findIndex(usuario => usuario.email === sesion.correo);
                 if (usuarioIndex !== -1) {
                     carrito = usuarios[usuarioIndex].carrito;
                 }
-    
-                // Ir a la página principal
+
                 actualizarCarrito();
                 avisoEnPantalla("Sesión iniciada correctamente");
                 landingPage();
             }
         } catch (error) {
             avisoEnPantalla("Ocurrió un error al iniciar sesión. Intenta nuevamente.");
-            console.error(error);
         }
     }
 
     // Función para mandar correo al registrarse
     function mandarCorreoRegistro() {
+        // Parámetros del correo
         let parametros = {
             nombre: document.getElementById("nombre-registro").value,
             email: document.getElementById("email-registro").value
@@ -466,12 +465,12 @@ window.onload = () => {
             return;
         }
 
+        // Enviar el correo con emailjs
         emailjs.send("service_lj8ddtz", "template_jddi90n", parametros)
             .then(() => {
                 avisoEnPantalla("¡Email enviado con éxito!");
             })
             .catch((error) => {
-                console.error("Error al enviar el correo:", error); 
                 avisoEnPantalla("Hubo un problema al enviar el correo. Por favor, intenta nuevamente.");
             });
     }
@@ -483,18 +482,19 @@ window.onload = () => {
             return;
         }
     
+        // Parámetros del correo
         let parametros = {
             nombre: sesion.nombre,
             email: sesion.correo,
             pedido: sesion.carrito.map(producto => `${producto.title} (Cantidad: ${producto.cantidad})`).join(", ")
         };
     
+        // Enviar correo con emailjs
         emailjs.send("service_lj8ddtz", "template_f1gs39e", parametros)
             .then(() => {
                 avisoEnPantalla("¡Email enviado con éxito!");
             })
             .catch((error) => {
-                console.error("Error al enviar el correo:", error);
                 avisoEnPantalla("Hubo un problema al enviar el correo. Por favor, intenta nuevamente.");
             });
     }
@@ -513,12 +513,11 @@ window.onload = () => {
 
     // Función para la notificacion;
     function avisoEnPantalla(mensaje) {
-        // Crear un nuevo elemento de notificación
+        // Crear un nuevo elemento para la notificación
         const notificacion = document.createElement("div");
         notificacion.classList.add("notificacion");
         notificacion.textContent = mensaje;
     
-        // Añadir al contenedor de notificaciones
         const contenedor = document.getElementById("notificaciones-container");
         contenedor.appendChild(notificacion);
     
@@ -527,7 +526,7 @@ window.onload = () => {
             notificacion.classList.add("show");
         }, 10); 
     
-        // Ocultar y eliminar la notificación después de 3 segundos
+        // Eliminar la notificación al pasar 3 segundos
         setTimeout(() => {
             notificacion.classList.add("fade-out");
             setTimeout(() => {
@@ -631,6 +630,8 @@ window.onload = () => {
     // Evento parra enviar el formulario
     formRegistro.addEventListener("submit", (e) => {
         e.preventDefault();
+
+        // Obtener los valores del registro
         const nombre = document.getElementById("nombre-registro").value;
         const email = document.getElementById("email-registro").value;
         const password = document.getElementById("password-registro").value;
@@ -641,6 +642,8 @@ window.onload = () => {
     // Evento para enviar el correo al registrarse
     formLogin.addEventListener("submit", (e) => {
         e.preventDefault();
+
+        // Obtener los valores del login
         const email = document.getElementById("email-login").value;
         const password = document.getElementById("password-login").value;
 
@@ -649,6 +652,7 @@ window.onload = () => {
 
     // Evento para Scroll Infinito
     window.addEventListener("scroll", () => {
+        // Comprobar si esta a la altura del scroll deseada
         const finalPagina =
             window.innerHeight + document.documentElement.scrollTop >=
             document.body.offsetHeight * 0.7;
@@ -660,7 +664,7 @@ window.onload = () => {
 
     // Evento para realizar el scroll desde la sección Hero
     flechaInicio.addEventListener("click", function (e) {
-        e.preventDefault(); // Evita el comportamiento por defecto del enlace
+        e.preventDefault();
 
         // Encuentra las secciones visibles
         const secciones = [seccionCategorias, seccionProductos];
@@ -670,12 +674,11 @@ window.onload = () => {
                 seccion.id !== "container-hero"
         );
 
+        // Arrastrar la vista hasta la sección encontrada
         if (siguienteSeccion) {
             siguienteSeccion.scrollIntoView({
                 block: "start",
             });
-        } else {
-            console.log("No hay más secciones visibles para redirigir.");
         }
     });
 
