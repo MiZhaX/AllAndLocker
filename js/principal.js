@@ -184,7 +184,7 @@ window.onload = () => {
     // Función para agregar productos al carrito
     function agregarAlCarrito(producto) {
         if (!sesion) {
-            showNotification("Por favor, inicia sesión para agregar productos al carrito.");
+            avisoEnPantalla("Por favor, inicia sesión para agregar productos al carrito.");
             return;
         }
     
@@ -199,7 +199,7 @@ window.onload = () => {
             sesion.carrito.push({ ...producto, cantidad: 1 });
         }
     
-        showNotification("Producto añadido al carrito");
+        avisoEnPantalla("Producto añadido al carrito");
         actualizarCarrito();
     }
 
@@ -354,6 +354,7 @@ window.onload = () => {
             botonLogout.style.display = "block";
     
             // Ir a la página principal
+            avisoEnPantalla("Sesión iniciada correctamente");
             landingPage();
         } catch (error) {
             alert(error.message); // Mostrar errores al usuario
@@ -368,24 +369,24 @@ window.onload = () => {
         }
 
         if (!parametros.nombre || !parametros.email) {
-            showNotification("Por favor, completa todos los campos.");
+            avisoEnPantalla("Por favor, completa todos los campos.");
             return;
         }
 
         emailjs.send("service_lj8ddtz", "template_jddi90n", parametros)
             .then(() => {
-                showNotification("¡Email enviado con éxito!");
+                avisoEnPantalla("¡Email enviado con éxito!");
             })
             .catch((error) => {
                 console.error("Error al enviar el correo:", error); 
-                showNotification("Hubo un problema al enviar el correo. Por favor, intenta nuevamente.");
+                avisoEnPantalla("Hubo un problema al enviar el correo. Por favor, intenta nuevamente.");
             });
     }
 
     // Función para mandar correo al hacer un pedido
     function mandarCorreoPedido() {
         if (!sesion || sesion.carrito.length === 0) {
-            showNotification("El carrito está vacío o no has iniciado sesión.");
+            avisoEnPantalla("El carrito está vacío o no has iniciado sesión.");
             return;
         }
     
@@ -397,11 +398,11 @@ window.onload = () => {
     
         emailjs.send("service_lj8ddtz", "template_f1gs39e", parametros)
             .then(() => {
-                showNotification("¡Email enviado con éxito!");
+                avisoEnPantalla("¡Email enviado con éxito!");
             })
             .catch((error) => {
                 console.error("Error al enviar el correo:", error);
-                showNotification("Hubo un problema al enviar el correo. Por favor, intenta nuevamente.");
+                avisoEnPantalla("Hubo un problema al enviar el correo. Por favor, intenta nuevamente.");
             });
     }
 
@@ -418,7 +419,7 @@ window.onload = () => {
     }
 
     // Función para la notificacion;
-    function showNotification(message) {
+    function avisoEnPantalla(message) {
         const notification = document.getElementById("notification");
         notification.textContent = message; // Cambiar mensaje si se pasa uno
         notification.classList.remove("hidden");
@@ -441,10 +442,10 @@ window.onload = () => {
 
     // Evento para finalizar la compra
     botonFinalizarCompra.addEventListener("click", () => {
-        if (carrito.length == 0) showNotification("El carrito está vacío");
+        if (carrito.length == 0) avisoEnPantalla("El carrito está vacío");
         else {
             mandarCorreoPedido();
-            showNotification("¡Gracias por tu compra!");
+            avisoEnPantalla("¡Gracias por tu compra!");
             carrito = [];
             sesion.carrito = [];
             actualizarCarrito();

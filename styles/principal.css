@@ -37,7 +37,7 @@ h2{
     color: var(--alt-color);
 }
 
-.notification {
+.notificacion {
     position: fixed;
     top: 25px;
     right: 25px;
@@ -53,11 +53,11 @@ h2{
     z-index: 1000;
 }
 
-.notification.hidden {
+.notificacion.hidden {
     display: none;
 }
 
-.notification.show {
+.notificacion.show {
     opacity: 1;
     transform: translateY(0);
     display: block;
