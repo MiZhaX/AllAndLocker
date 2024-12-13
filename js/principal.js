@@ -151,18 +151,20 @@ window.onload = () => {
 
                         const precio = document.createElement("p");
                         precio.innerHTML = `$${producto.price}`;
-
+   
                         productoDiv.appendChild(img);
                         productoDiv.appendChild(nombre);
                         productoDiv.appendChild(precio);
-                        productosDiv.appendChild(productoDiv);
 
                         if(sesion !== null){
-                            const botonAgregar = document.createElement("button");
-                            botonAgregar.innerHTML = "Añadir al carrito";
-                            botonAgregar.addEventListener("click", () => agregarAlCarrito(producto));
-                            productoDiv.appendChild(botonAgregar);
+                            const agregarCesta = document.createElement("button");
+                            agregarCesta.innerHTML = "Añadir al carrito";
+                            agregarCesta.classList.add("agregarCesta");
+                            agregarCesta.addEventListener("click", () => agregarAlCarrito(producto));
+                            productoDiv.appendChild(agregarCesta);
                         }
+
+                        productosDiv.appendChild(productoDiv);
                     });
 
                     paginaActual++; // Incrementar página solo si hubo productos
@@ -446,7 +448,7 @@ window.onload = () => {
         seccionSiguenos.style.display = "none";
         seccionCarrito.style.display = "block";
     });
-
+ 
     // Eventos para regresar a la landing page 
     botonInicio.addEventListener("click", landingPage);
     botonCategorias.addEventListener("click", landingPage);

@@ -214,6 +214,7 @@ h2{
 
 .producto {
     display: flex;
+    justify-content: space-between;
     flex-direction: column;
     align-items: center;
 }
@@ -247,6 +248,21 @@ h2{
     align-items: center;
     z-index: 1000; 
     visibility: hidden;
+}
+
+.agregarCesta {
+    padding: 0.5rem 1rem;
+    font-size: 0.9rem;
+    color: var(--sec-color);
+    background-color: var(--alt-color);
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+.agregarCesta:hover {
+    background-color: var(--alt-alt-color); 
 }
 
 /* ----------------- DETALLES PRODUCTOS ----------------- */
@@ -740,7 +756,7 @@ h2{
     }
 
     #imagen-publicitaria img {
-        width: 350px;
+        width: 20rem;
     }
 
     #footer {
