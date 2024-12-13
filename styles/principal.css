@@ -39,9 +39,9 @@ h2{
 
 .notification {
     position: fixed;
-    top: 20px;
-    right: 20px;
-    background-color: var(--main-color);
+    top: 25px;
+    right: 25px;
+    background-color: var(--alt-color);
     color: white;
     padding: 10px 20px;
     border-radius: 5px;

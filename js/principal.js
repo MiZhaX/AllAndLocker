@@ -184,7 +184,7 @@ window.onload = () => {
     // Función para agregar productos al carrito
     function agregarAlCarrito(producto) {
         if (!sesion) {
-            alert("Por favor, inicia sesión para agregar productos al carrito.");
+            showNotification("Por favor, inicia sesión para agregar productos al carrito.");
             return;
         }
     
@@ -228,7 +228,7 @@ window.onload = () => {
             precio.innerHTML = `$${(producto.price * producto.cantidad).toFixed(2)}`;
 
             const eliminar = document.createElement("button");
-            eliminar.innerHTML = `<i class="fa-solid fa-dumpster"></i>`;
+            eliminar.innerHTML = `<i class="fa-solid fa-dumpster fa-lg"></i>`;
             eliminar.addEventListener("click", () => {
                 carrito = carrito.filter(item => item.id !== producto.id);
                 sesion.carrito = sesion.carrito.filter(item => item.id !== producto.id);
@@ -356,7 +356,6 @@ window.onload = () => {
             // Ir a la página principal
             landingPage();
         } catch (error) {
-            console.error(error);
             alert(error.message); // Mostrar errores al usuario
         }
     }
@@ -369,24 +368,24 @@ window.onload = () => {
         }
 
         if (!parametros.nombre || !parametros.email) {
-            alert("Por favor, completa todos los campos.");
+            showNotification("Por favor, completa todos los campos.");
             return;
         }
 
         emailjs.send("service_lj8ddtz", "template_jddi90n", parametros)
             .then(() => {
-                alert("¡Email enviado con éxito!");
+                showNotification("¡Email enviado con éxito!");
             })
             .catch((error) => {
                 console.error("Error al enviar el correo:", error); 
-                alert("Hubo un problema al enviar el correo. Por favor, intenta nuevamente.");
+                showNotification("Hubo un problema al enviar el correo. Por favor, intenta nuevamente.");
             });
     }
 
     // Función para mandar correo al hacer un pedido
     function mandarCorreoPedido() {
         if (!sesion || sesion.carrito.length === 0) {
-            alert("El carrito está vacío o no has iniciado sesión.");
+            showNotification("El carrito está vacío o no has iniciado sesión.");
             return;
         }
     
@@ -398,11 +397,11 @@ window.onload = () => {
     
         emailjs.send("service_lj8ddtz", "template_f1gs39e", parametros)
             .then(() => {
-                alert("¡Email enviado con éxito!");
+                showNotification("¡Email enviado con éxito!");
             })
             .catch((error) => {
                 console.error("Error al enviar el correo:", error);
-                alert("Hubo un problema al enviar el correo. Por favor, intenta nuevamente.");
+                showNotification("Hubo un problema al enviar el correo. Por favor, intenta nuevamente.");
             });
     }
 
@@ -442,10 +441,10 @@ window.onload = () => {
 
     // Evento para finalizar la compra
     botonFinalizarCompra.addEventListener("click", () => {
-        if (carrito.length == 0) alert("El carrito está vacío");
+        if (carrito.length == 0) showNotification("El carrito está vacío");
         else {
             mandarCorreoPedido();
-            alert("¡Gracias por tu compra!");
+            showNotification("¡Gracias por tu compra!");
             carrito = [];
             sesion.carrito = [];
             actualizarCarrito();
