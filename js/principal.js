@@ -43,7 +43,6 @@ window.onload = () => {
     let hayMasProductos = true; // Indica si hay más productos por cargar
     let carrito = [];
     let sesion = null;
-    let mensaje = "";
 
     // FUNCIONES
     // Función para cargar y mostrar categorías
@@ -355,8 +354,7 @@ window.onload = () => {
             botonLogout.style.display = "block";
     
             // Ir a la página principal
-            mensaje = "Sesión iniciada correctamente";
-            avisoEnPantalla(mensaje);
+            avisoEnPantalla("Sesión iniciada correctamente");
             landingPage();
         } catch (error) {
             avisoEnPantalla(error.message); // Mostrar errores al usuario
@@ -422,15 +420,15 @@ window.onload = () => {
 
     // Función para la notificacion;
     function avisoEnPantalla(message) {
-        const notification = document.getElementById("notification");
-        notification.textContent = message; // Cambiar mensaje si se pasa uno
-        notification.classList.remove("hidden");
-        notification.classList.add("show");
+        const notificacion = document.getElementById("notificacion");
+        notificacion.textContent = message; // Cambiar mensaje si se pasa uno
+        notificacion.classList.remove("hidden");
+        notificacion.classList.add("show");
     
         // Ocultar la notificación automáticamente después de 3 segundos
         setTimeout(() => {
-            notification.classList.remove("show");
-            notification.classList.add("hidden");
+            notificacion.classList.remove("show");
+            notificacion.classList.add("hidden");
         }, 3000);
     }
 
