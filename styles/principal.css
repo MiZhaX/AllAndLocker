@@ -37,6 +37,32 @@ h2{
     color: var(--alt-color);
 }
 
+.notification {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    background-color: var(--main-color);
+    color: white;
+    padding: 10px 20px;
+    border-radius: 5px;
+    box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.2);
+    font-size: 1rem;
+    opacity: 0;
+    transform: translateY(-20px);
+    transition: opacity 0.5s, transform 0.5s;
+    z-index: 1000;
+}
+
+.notification.hidden {
+    display: none;
+}
+
+.notification.show {
+    opacity: 1;
+    transform: translateY(0);
+    display: block;
+}
+
 /* ----------------- INICIO ----------------- */
 #navbar {
     display: flex;

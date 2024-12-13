@@ -199,6 +199,7 @@ window.onload = () => {
             sesion.carrito.push({ ...producto, cantidad: 1 });
         }
     
+        showNotification("Producto añadido al carrito");
         actualizarCarrito();
     }
 
@@ -227,7 +228,7 @@ window.onload = () => {
             precio.innerHTML = `$${(producto.price * producto.cantidad).toFixed(2)}`;
 
             const eliminar = document.createElement("button");
-            eliminar.innerHTML = "Eliminar";
+            eliminar.innerHTML = `<i class="fa-solid fa-dumpster"></i>`;
             eliminar.addEventListener("click", () => {
                 carrito = carrito.filter(item => item.id !== producto.id);
                 sesion.carrito = sesion.carrito.filter(item => item.id !== producto.id);
@@ -415,6 +416,20 @@ window.onload = () => {
         seccionCategorias.style.display = "grid";
         seccionSiguenos.style.display = "flex";
         seccionSuscripcion.style.display = "flex";
+    }
+
+    // Función para la notificacion;
+    function showNotification(message) {
+        const notification = document.getElementById("notification");
+        notification.textContent = message; // Cambiar mensaje si se pasa uno
+        notification.classList.remove("hidden");
+        notification.classList.add("show");
+    
+        // Ocultar la notificación automáticamente después de 3 segundos
+        setTimeout(() => {
+            notification.classList.remove("show");
+            notification.classList.add("hidden");
+        }, 3000);
     }
 
     // EVENTOS
