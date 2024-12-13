@@ -310,10 +310,8 @@ window.onload = () => {
             if (!response.ok) {
                 throw new Error("Error al registrar usuario. Verifica los datos ingresados.");
             } else {
+                avisoEnPantalla("Usuario registrado con éxito");
                 mandarCorreoRegistro();
-
-                const data = await response.json();
-                console.log("Usuario registrado con éxito:", data);
                 landingPage();
             }
         } catch (error) {
@@ -419,18 +417,30 @@ window.onload = () => {
     }
 
     // Función para la notificacion;
-    function avisoEnPantalla(message) {
-        const notificacion = document.getElementById("notificacion");
-        notificacion.textContent = message; // Cambiar mensaje si se pasa uno
-        notificacion.classList.remove("hidden");
-        notificacion.classList.add("show");
+    function avisoEnPantalla(mensaje) {
+        // Crear un nuevo elemento de notificación
+        const notificacion = document.createElement("div");
+        notificacion.classList.add("notificacion");
+        notificacion.textContent = mensaje;
     
-        // Ocultar la notificación automáticamente después de 3 segundos
+        // Añadir al contenedor de notificaciones
+        const contenedor = document.getElementById("notificaciones-container");
+        contenedor.appendChild(notificacion);
+    
+        // Mostrar la notificación
         setTimeout(() => {
-            notificacion.classList.remove("show");
-            notificacion.classList.add("hidden");
+            notificacion.classList.add("show");
+        }, 10); 
+    
+        // Ocultar y eliminar la notificación después de 3 segundos
+        setTimeout(() => {
+            notificacion.classList.add("fade-out");
+            setTimeout(() => {
+                contenedor.removeChild(notificacion);
+            }, 500); 
         }, 3000);
     }
+    
 
     // EVENTOS
     // Evento para vaciar el carrito
@@ -500,6 +510,7 @@ window.onload = () => {
         botonRegistro.style.display = "block";
         botonLogout.style.display = "none";
         sesion = null;
+        avisoEnPantalla("Sesión cerrada");
         landingPage();
     });
 

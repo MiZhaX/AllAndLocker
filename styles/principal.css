@@ -37,10 +37,17 @@ h2{
     color: var(--alt-color);
 }
 
-.notificacion {
+.notificaciones-container {
     position: fixed;
-    top: 25px;
-    right: 25px;
+    top: 20px;
+    right: 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px; /* Espacio entre notificaciones */
+    z-index: 1000;
+}
+
+.notificacion {
     background-color: var(--alt-color);
     color: white;
     padding: 10px 20px;
@@ -50,17 +57,17 @@ h2{
     opacity: 0;
     transform: translateY(-20px);
     transition: opacity 0.5s, transform 0.5s;
-    z-index: 1000;
-}
-
-.notificacion.hidden {
-    display: none;
 }
 
 .notificacion.show {
     opacity: 1;
     transform: translateY(0);
-    display: block;
+}
+
+.notificacion.fade-out {
+    opacity: 0;
+    transform: translateY(-20px);
+    transition: opacity 0.5s, transform 0.5s;
 }
 
 /* ----------------- INICIO ----------------- */
