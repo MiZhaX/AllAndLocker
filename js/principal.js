@@ -43,6 +43,7 @@ window.onload = () => {
     let hayMasProductos = true; // Indica si hay más productos por cargar
     let carrito = [];
     let sesion = null;
+    let mensaje = "";
 
     // FUNCIONES
     // Función para cargar y mostrar categorías
@@ -354,10 +355,11 @@ window.onload = () => {
             botonLogout.style.display = "block";
     
             // Ir a la página principal
-            avisoEnPantalla("Sesión iniciada correctamente");
+            mensaje = "Sesión iniciada correctamente";
+            avisoEnPantalla(mensaje);
             landingPage();
         } catch (error) {
-            alert(error.message); // Mostrar errores al usuario
+            avisoEnPantalla(error.message); // Mostrar errores al usuario
         }
     }
 
