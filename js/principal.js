@@ -42,7 +42,17 @@ window.onload = () => {
     let cargando = false; // Control de estado de carga
     let hayMasProductos = true; // Indica si hay más productos por cargar
     let carrito = [];
-    let sesion = localStorage.getItem("sesion");
+    let sesion = JSON.parse(localStorage.getItem("sesion"));
+    console.log(sesion);
+
+    if(sesion){
+        botonLogin.style.display = "none";
+        botonRegistro.style.display = "none";
+        botonLogout.style.display = "block";
+
+        carrito = sesion.carrito || [];
+        actualizarCarrito();
+    }
 
     // FUNCIONES
     // Función para cargar y mostrar categorías
@@ -222,6 +232,9 @@ window.onload = () => {
             cantidad.min = 1;
             cantidad.addEventListener("input", () => {
                 producto.cantidad = parseInt(cantidad.value) || 1;
+                sesion.carrito = carrito;
+                localStorage.setItem("sesion", JSON.stringify(sesion));
+
                 actualizarCarrito();
             });
 
@@ -327,36 +340,29 @@ window.onload = () => {
     
         try {
             const response = await fetch(url);
-            if (!response.ok) {
-                throw new Error("Error al obtener la lista de usuarios.");
-            }
     
             const usuarios = await response.json();
     
             // Buscar el usuario por email
             const usuarioEncontrado = usuarios.find((usuario) => usuario.email === email);
     
-            if (!usuarioEncontrado) {
-                throw new Error("Usuario no encontrado. Verifica el correo ingresado.");
-            }
-    
             // Validar la contraseña
             if (usuarioEncontrado.password !== contrasena) {
-                throw new Error("Contraseña incorrecta. Intenta de nuevo.");
-            }
-    
-            // Almacenar datos de la sesión
-            sesion = { nombre: usuarioEncontrado.name, correo: email, carrito: [] };
-            localStorage.setItem("sesion", JSON.stringify(sesion));
+                avisoEnPantalla("Contraseña incorrecta. Intenta de nuevo.");
+            } else{
+                // Almacenar datos de la sesión
+                sesion = { nombre: usuarioEncontrado.name, correo: email, carrito: [] };
+                localStorage.setItem("sesion", JSON.stringify(sesion));
 
-            // Actualizar botones de sesión
-            botonLogin.style.display = "none";
-            botonRegistro.style.display = "none";
-            botonLogout.style.display = "block";
-    
-            // Ir a la página principal
-            avisoEnPantalla("Sesión iniciada correctamente");
-            landingPage();
+                // Actualizar botones de sesión
+                botonLogin.style.display = "none";
+                botonRegistro.style.display = "none";
+                botonLogout.style.display = "block";
+
+                // Ir a la página principal
+                avisoEnPantalla("Sesión iniciada correctamente");
+                landingPage();
+            }      
         } catch (error) {
             avisoEnPantalla(error.message); // Mostrar errores al usuario
         }
@@ -442,8 +448,7 @@ window.onload = () => {
                 contenedor.removeChild(notificacion);
             }, 500); 
         }, 3000);
-    }
-    
+    }    
 
     // EVENTOS
     // Evento para vaciar el carrito
