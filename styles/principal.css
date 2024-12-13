@@ -39,8 +39,8 @@ h2{
 
 .notificaciones-container {
     position: fixed;
-    top: 20px;
-    right: 20px;
+    top: 6rem;
+    right: 2rem;
     display: flex;
     flex-direction: column;
     gap: 10px; /* Espacio entre notificaciones */
@@ -50,13 +50,14 @@ h2{
 .notificacion {
     background-color: var(--alt-color);
     color: white;
-    padding: 10px 20px;
+    padding: 0.6rem;
     border-radius: 5px;
     box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.2);
     font-size: 1rem;
     opacity: 0;
     transform: translateY(-20px);
     transition: opacity 0.5s, transform 0.5s;
+    text-align: center;
 }
 
 .notificacion.show {

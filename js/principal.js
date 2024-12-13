@@ -42,7 +42,7 @@ window.onload = () => {
     let cargando = false; // Control de estado de carga
     let hayMasProductos = true; // Indica si hay más productos por cargar
     let carrito = [];
-    let sesion = null;
+    let sesion = localStorage.getItem("sesion");
 
     // FUNCIONES
     // Función para cargar y mostrar categorías
@@ -199,6 +199,7 @@ window.onload = () => {
             sesion.carrito.push({ ...producto, cantidad: 1 });
         }
     
+        localStorage.setItem("sesion", JSON.stringify(sesion));
         avisoEnPantalla("Producto añadido al carrito");
         actualizarCarrito();
     }
@@ -232,6 +233,7 @@ window.onload = () => {
             eliminar.addEventListener("click", () => {
                 carrito = carrito.filter(item => item.id !== producto.id);
                 sesion.carrito = sesion.carrito.filter(item => item.id !== producto.id);
+                localStorage.setItem("sesion", JSON.stringify(sesion));
                 actualizarCarrito();
             });
 
@@ -345,7 +347,8 @@ window.onload = () => {
     
             // Almacenar datos de la sesión
             sesion = { nombre: usuarioEncontrado.name, correo: email, carrito: [] };
-    
+            localStorage.setItem("sesion", JSON.stringify(sesion));
+
             // Actualizar botones de sesión
             botonLogin.style.display = "none";
             botonRegistro.style.display = "none";
@@ -447,6 +450,7 @@ window.onload = () => {
     botonVaciarCarrito.addEventListener("click", () => {
         carrito = [];
         sesion.carrito = [];
+        localStorage.setItem("sesion", JSON.stringify(sesion));
         actualizarCarrito();
     });
 
@@ -458,6 +462,7 @@ window.onload = () => {
             avisoEnPantalla("¡Gracias por tu compra!");
             carrito = [];
             sesion.carrito = [];
+            localStorage.setItem("sesion", JSON.stringify(nuevaSesion));
             actualizarCarrito();
         }
     });
@@ -510,6 +515,7 @@ window.onload = () => {
         botonRegistro.style.display = "block";
         botonLogout.style.display = "none";
         sesion = null;
+        localStorage.removeItem("sesion");
         avisoEnPantalla("Sesión cerrada");
         landingPage();
     });
