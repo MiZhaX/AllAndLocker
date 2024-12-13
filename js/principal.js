@@ -37,14 +37,14 @@ window.onload = () => {
     const formRegistro = document.getElementById("form-registro")
 
     // VARIABLES PARA LA FUNCIONALIDAD DEL PROGRAMA
-    let paginaActual = 1; // Para paginar productos
+    let productoInicial = 0; // Para paginar productos
     let categoriaId = null; // Categoría seleccionada
     let cargando = false; // Control de estado de carga
     let hayMasProductos = true; // Indica si hay más productos por cargar
     let carrito = [];
     let sesion = JSON.parse(localStorage.getItem("sesion"));
-    console.log(sesion);
 
+    // Cargar los datos de la sesión actual
     if(sesion){
         botonLogin.style.display = "none";
         botonRegistro.style.display = "none";
@@ -83,7 +83,7 @@ window.onload = () => {
                     enlace.addEventListener("click", (e) => {
                         e.preventDefault(); 
                         categoriaId = item.id; // Obtener la id de la categoría
-                        paginaActual = 1; 
+                        productoInicial = 0; 
                         productosDiv.innerHTML = "";
                         hayMasProductos = true; 
                         seccionCategorias.style.display = "none"; 
@@ -126,12 +126,12 @@ window.onload = () => {
 
         cargando = true;
 
-        const url = `https://api.escuelajs.co/api/v1/categories/${categoriaId}/products?offset=${(paginaActual - 1) * 10}&limit=10`;
+        const url = `https://api.escuelajs.co/api/v1/categories/${categoriaId}/products?offset=${productoInicial * 10}&limit=10`;
 
         fetch(url, { method: "GET" })
             .then((res) => res.json())
             .then((productos) => {
-                if (productos.length === 0 && paginaActual === 1) {
+                if (productos.length === 0 && productoInicial === 0) {
                     // Mostrar mensaje si no hay productos al inicio
                     mensajeProductos.style.display = "block";
                     hayMasProductos = false; // Detener más cargas
@@ -177,7 +177,7 @@ window.onload = () => {
                         productosDiv.appendChild(productoDiv);
                     });
 
-                    paginaActual++; // Incrementar página solo si hubo productos
+                    productoInicial++; // Incrementar página solo si hubo productos
                 }
             })
             .catch((error) => {
@@ -364,7 +364,7 @@ window.onload = () => {
                 landingPage();
             }      
         } catch (error) {
-            avisoEnPantalla(error.message); // Mostrar errores al usuario
+            avisoEnPantalla("Correo no registrado."); // Mostrar errores al usuario
         }
     }
 
