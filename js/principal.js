@@ -43,6 +43,7 @@ window.onload = () => {
     let hayMasProductos = true; // Indica si hay más productos por cargar
     let carrito = [];
     let sesion = JSON.parse(localStorage.getItem("sesion"));
+    let usuarios = JSON.parse(localStorage.getItem("usuarios")) || [];
 
     // Cargar los datos de la sesión actual
     if(sesion){
@@ -50,7 +51,12 @@ window.onload = () => {
         botonRegistro.style.display = "none";
         botonLogout.style.display = "block";
 
-        carrito = sesion.carrito || [];
+        // Encontrar al usuario actual y actualizar su carrito
+        let usuarioIndex = usuarios.findIndex(usuario => usuario.email === sesion.correo);
+        if (usuarioIndex !== -1) {
+            sesion.carrito = usuarios[usuarioIndex].carrito;
+            carrito = usuarios[usuarioIndex].carrito;
+        }
         actualizarCarrito();
     }
 
@@ -198,18 +204,23 @@ window.onload = () => {
             return;
         }
     
-        const productoExistente = carrito.find(item => item.id === producto.id);
         const productoEnCarrito = sesion.carrito.find(item => item.id === producto.id);
-    
-        if (productoExistente) {
-            productoExistente.cantidad++;
+        if (productoEnCarrito) {
             productoEnCarrito.cantidad++;
         } else {
-            carrito.push({ ...producto, cantidad: 1 });
             sesion.carrito.push({ ...producto, cantidad: 1 });
         }
-    
         localStorage.setItem("sesion", JSON.stringify(sesion));
+
+        // Encontrar al usuario actual y actualizar su carrito
+        let usuarioIndex = usuarios.findIndex(usuario => usuario.email === sesion.correo);
+        if (usuarioIndex !== -1) {
+            usuarios[usuarioIndex].carrito = sesion.carrito;
+        }
+        // Guardar el array de usuarios actualizado en localStorage
+        localStorage.setItem("usuarios", JSON.stringify(usuarios));
+    
+        carrito = sesion.carrito;
         avisoEnPantalla("Producto añadido al carrito");
         actualizarCarrito();
     }
@@ -235,6 +246,13 @@ window.onload = () => {
                 sesion.carrito = carrito;
                 localStorage.setItem("sesion", JSON.stringify(sesion));
 
+                // Encontrar al usuario actual y actualizar su carrito
+                let usuarioIndex = usuarios.findIndex(usuario => usuario.email === sesion.correo);
+                if (usuarioIndex !== -1) {
+                    usuarios[usuarioIndex].carrito = carrito;
+                }
+                localStorage.setItem("usuarios", JSON.stringify(usuarios));
+
                 actualizarCarrito();
             });
 
@@ -247,6 +265,14 @@ window.onload = () => {
                 carrito = carrito.filter(item => item.id !== producto.id);
                 sesion.carrito = sesion.carrito.filter(item => item.id !== producto.id);
                 localStorage.setItem("sesion", JSON.stringify(sesion));
+
+                // Encontrar al usuario actual y actualizar su carrito
+                let usuarioIndex = usuarios.findIndex(usuario => usuario.email === sesion.correo);
+                if (usuarioIndex !== -1) {
+                    usuarios[usuarioIndex].carrito = sesion.carrito;
+                }
+                localStorage.setItem("usuarios", JSON.stringify(usuarios));
+
                 actualizarCarrito();
             });
 
@@ -309,7 +335,7 @@ window.onload = () => {
     // Función para regitrar a un usuario
     async function registrarUsuario(nombre, email, contraseña) {
         const url = "https://api.escuelajs.co/api/v1/users/";
-
+    
         try {
             const response = await fetch(url, {
                 method: "POST",
@@ -321,15 +347,36 @@ window.onload = () => {
                     avatar: "https://picsum.photos/800",
                 }),
             });
-
+    
             if (!response.ok) {
-                throw new Error("Error al registrar usuario. Verifica los datos ingresados.");
-            } else {
+                avisoEnPantalla("Error al registrar usuario.");
+            } else {                
+                // Guardar el usuario en el array de usuarios local
+                usuarios = JSON.parse(localStorage.getItem("usuarios")) || [];
+                
+                // Verificar si ya existe un usuario con ese correo
+                if (usuarios.some((usuario) => usuario.email === email)) {
+                    avisoEnPantalla("El correo ya está registrado localmente. Intenta iniciar sesión.");
+                    return;
+                }
+    
+                // Agregar el nuevo usuario al array local
+                usuarios.push({
+                    nombre: nombre,
+                    email: email,
+                    password: contraseña,
+                    carrito: [],
+                });
+    
+                // Guardar el array actualizado en el localStorage
+                localStorage.setItem("usuarios", JSON.stringify(usuarios));
+    
                 avisoEnPantalla("Usuario registrado con éxito");
-                mandarCorreoRegistro();
-                landingPage();
+                mandarCorreoRegistro(); // Enviar correo de confirmación
+                landingPage(); // Redirigir al landing page
             }
         } catch (error) {
+            avisoEnPantalla("Error de conexión al registrar usuario. Intenta nuevamente.");
             console.error(error);
         }
     }
@@ -339,32 +386,71 @@ window.onload = () => {
         const url = "https://api.escuelajs.co/api/v1/users/";
     
         try {
-            const response = await fetch(url);
+            // Obtener el array de usuarios locales desde el localStorage
+            let usuarios = JSON.parse(localStorage.getItem("usuarios")) || [];
     
-            const usuarios = await response.json();
+            // Buscar el usuario localmente
+            let usuarioEncontrado = usuarios.find((usuario) => usuario.email === email);
     
-            // Buscar el usuario por email
-            const usuarioEncontrado = usuarios.find((usuario) => usuario.email === email);
+            if (!usuarioEncontrado) {
+                // Si no está localmente, consultar la API para obtener los usuarios
+                const response = await fetch(url);
     
-            // Validar la contraseña
+                if (!response.ok) {
+                    avisoEnPantalla("Error al buscar usuarios. Intenta de nuevo.");
+                    return;
+                }
+    
+                const usuariosAPI = await response.json();
+                usuarioEncontrado = usuariosAPI.find((usuario) => usuario.email === email);
+    
+                // Si no se encuentra en la API tampoco, mostrar un mensaje
+                if (!usuarioEncontrado) {
+                    avisoEnPantalla("Correo no registrado. Por favor, regístrate.");
+                    return;
+                }
+    
+                // Guardar el usuario obtenido de la API en el array local
+                usuarios.push({
+                    id: usuarioEncontrado.id,
+                    nombre: usuarioEncontrado.name,
+                    email: usuarioEncontrado.email,
+                    password: contrasena, // Usar la contraseña proporcionada para sincronización inicial
+                    avatar: usuarioEncontrado.avatar,
+                    carrito: [],
+                });
+    
+                // Actualizar el array de usuarios en el localStorage
+                localStorage.setItem("usuarios", JSON.stringify(usuarios));
+            }
+    
+            // Validar la contraseña del usuario encontrado
             if (usuarioEncontrado.password !== contrasena) {
                 avisoEnPantalla("Contraseña incorrecta. Intenta de nuevo.");
-            } else{
+            } else {
                 // Almacenar datos de la sesión
-                sesion = { nombre: usuarioEncontrado.name, correo: email, carrito: [] };
+                sesion = { nombre: usuarioEncontrado.nombre, correo: email, carrito: usuarioEncontrado.carrito || [] };
                 localStorage.setItem("sesion", JSON.stringify(sesion));
-
+    
                 // Actualizar botones de sesión
                 botonLogin.style.display = "none";
                 botonRegistro.style.display = "none";
                 botonLogout.style.display = "block";
 
+                // Actualizar el carrito
+                let usuarioIndex = usuarios.findIndex(usuario => usuario.email === sesion.correo);
+                if (usuarioIndex !== -1) {
+                    carrito = usuarios[usuarioIndex].carrito;
+                }
+    
                 // Ir a la página principal
+                actualizarCarrito();
                 avisoEnPantalla("Sesión iniciada correctamente");
                 landingPage();
-            }      
+            }
         } catch (error) {
-            avisoEnPantalla("Correo no registrado."); // Mostrar errores al usuario
+            avisoEnPantalla("Ocurrió un error al iniciar sesión. Intenta nuevamente.");
+            console.error(error);
         }
     }
 
@@ -455,6 +541,14 @@ window.onload = () => {
     botonVaciarCarrito.addEventListener("click", () => {
         carrito = [];
         sesion.carrito = [];
+
+        // Encontrar al usuario actual y actualizar su carrito
+        let usuarioIndex = usuarios.findIndex(usuario => usuario.email === sesion.correo);
+        if (usuarioIndex !== -1) {
+            usuarios[usuarioIndex].carrito = [];
+        }
+        localStorage.setItem("usuarios", JSON.stringify(usuarios));
+
         localStorage.setItem("sesion", JSON.stringify(sesion));
         actualizarCarrito();
     });
@@ -467,7 +561,14 @@ window.onload = () => {
             avisoEnPantalla("¡Gracias por tu compra!");
             carrito = [];
             sesion.carrito = [];
-            localStorage.setItem("sesion", JSON.stringify(nuevaSesion));
+            // Encontrar al usuario actual y actualizar su carrito
+            let usuarioIndex = usuarios.findIndex(usuario => usuario.email === sesion.correo);
+            if (usuarioIndex !== -1) {
+                usuarios[usuarioIndex].carrito = [];
+            }
+            localStorage.setItem("usuarios", JSON.stringify(usuarios));
+
+            localStorage.setItem("sesion", JSON.stringify(sesion));
             actualizarCarrito();
         }
     });
@@ -520,8 +621,10 @@ window.onload = () => {
         botonRegistro.style.display = "block";
         botonLogout.style.display = "none";
         sesion = null;
+        carrito = [];
         localStorage.removeItem("sesion");
         avisoEnPantalla("Sesión cerrada");
+        actualizarCarrito();
         landingPage();
     });
 

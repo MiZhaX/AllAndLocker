@@ -39,7 +39,7 @@ h2{
 
 .notificaciones-container {
     position: fixed;
-    top: 6rem;
+    top: 6.5rem;
     right: 2rem;
     display: flex;
     flex-direction: column;
