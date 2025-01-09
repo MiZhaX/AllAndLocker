@@ -23,7 +23,7 @@ html {
 body {
     margin: 0;
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(50rem, 1fr));
+    grid-template-columns: repeat(auto-fit, minmax(80rem, 1fr));
     grid-gap: 0.5rem;
     font-family: var(--sec-font);
     background-color: var(--bg-color);
